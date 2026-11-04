@@ -35,41 +35,37 @@ export default async function Home() {
   const featured = projects.filter((p) => p.featured);
   const statCards = (featured.length >= 3 ? featured : projects).slice(0, 3);
   const grid = projects.slice(0, 8);
-  const heroCards = [
-    { k: "black-friday", cls: "left-0 top-6 w-[58%] aspect-[16/10] -rotate-3 z-20" },
-    { k: "christmas", cls: "right-0 top-0 w-[38%] aspect-[4/5] rotate-3 z-10" },
-    { k: "fashion", cls: "right-[6%] top-[38%] w-[34%] aspect-square rotate-[5deg] z-30" },
-    { k: "skincare", cls: "left-[4%] top-[48%] w-[32%] aspect-[3/4] -rotate-[4deg] z-30" },
-    { k: "homepage", cls: "left-[30%] bottom-0 w-[44%] aspect-[16/10] rotate-2 z-40" },
-    { k: "email", cls: "right-[-2%] bottom-[2%] w-[26%] aspect-[3/4] rotate-[6deg] z-20" },
+  const heroTiles = [
+    { k: "black-friday", cls: "col-span-4 row-span-3" },
+    { k: "christmas", cls: "col-span-2 row-span-4" },
+    { k: "fashion", cls: "col-span-2 row-span-3" },
+    { k: "skincare", cls: "col-span-2 row-span-3" },
+    { k: "homepage", cls: "col-span-2 row-span-2" },
   ] as const;
 
   return (
     <>
       {/* 1 HERO */}
-      <section className="relative overflow-hidden bg-ink pb-16 pt-32 sm:pt-44 lg:pb-24">
+      <section className="relative overflow-hidden bg-ink pb-12 pt-28 sm:pt-36 lg:pb-16">
         <div className="grain pointer-events-none absolute inset-0 opacity-70" />
         <div className="pointer-events-none absolute -left-40 top-20 h-[500px] w-[500px] rounded-full bg-lime/10 blur-[140px]" />
         <div className="container-x relative grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
           <div>
             <p className="label mb-5 flex items-center gap-2"><i className="h-2 w-2 rounded-full bg-lime" />E-commerce campaign creative studio</p>
-            <h1 className="h-display text-[clamp(3rem,9vw,7rem)]">Your ultimate<br />e-commerce<br /><Lime>creative partner.</Lime></h1>
-            <p className="mt-7 max-w-xl text-lg text-mute">We create powerful promotional designs and compelling campaign copy that help e-commerce brands stand out, attract attention, and make every sales season count.</p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <h1 className="h-display text-[clamp(2.8rem,7.2vw,5.8rem)]">Your ultimate<br />e-commerce<br /><Lime>creative partner.</Lime></h1>
+            <p className="mt-5 max-w-xl text-lg text-mute">We create powerful promotional designs and compelling campaign copy that help e-commerce brands stand out, attract attention, and make every sales season count.</p>
+            <div className="mt-7 flex flex-wrap gap-3">
               <Btn href="/pricing" event="cta_click" eventParams={{ location: "hero_packages" }}>Explore our packages <Arrow /></Btn>
               <Btn href="/work" variant="ghost">View our work</Btn>
             </div>
             <p className="mt-6 text-sm text-mute">Built for ambitious e-commerce brands.</p>
           </div>
-          <div aria-hidden className="relative hidden aspect-[1/1.02] lg:block">
-            {heroCards.map((c, i) => (
-              <div key={c.k} className={cn("absolute overflow-hidden rounded-xl border border-white/15 shadow-2xl shadow-black/60 transition duration-500 hover:z-50 hover:scale-[1.04]", c.cls, i % 2 ? "animate-float" : "")} style={{ animationDelay: `${i * 0.8}s` }}>
-                <Visual img={pick(i)} kind={c.k} />
+          <div className="mx-auto grid aspect-square w-full max-w-[560px] grid-cols-6 grid-rows-6 gap-2.5 sm:gap-3 lg:max-w-[540px] lg:justify-self-end">
+            {heroTiles.map((t, i) => (
+              <div key={t.k} className={cn("group relative overflow-hidden rounded-2xl border border-white/10 bg-card shadow-xl shadow-black/40", t.cls)}>
+                <div className="h-full w-full transition duration-700 group-hover:scale-[1.04]"><Visual img={pick(i)} kind={t.k} alt="Campaign design sample" /></div>
               </div>
             ))}
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:hidden">
-            {(["black-friday", "christmas", "fashion", "skincare", "homepage", "email"] as const).map((k, i) => <div key={k} className="aspect-square overflow-hidden rounded-xl border border-white/15"><Visual img={pick(i)} kind={k} /></div>)}
           </div>
         </div>
         {pool.length === 0 && <p className="container-x relative mt-6 text-[11px] text-white/35 lg:text-right">Campaign artwork shown is original concept work by Ignixales.</p>}
