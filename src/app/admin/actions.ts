@@ -165,3 +165,38 @@ export async function saveContent(key: string, json: string) {
 export async function resetContent(key: string) {
   await requireAdmin(); await db().from("site_content").delete().eq("key", key); revalidatePath("/", "layout");
 }
+
+/* ---------- per-service galleries ---------- */
+const SERVICE_SLUGS = ["banner-design", "flyer-design", "email-copywriting", "social-media-design"];
+const refreshService = (slug: string) => { revalidatePath(`/services/${slug}`); revalidatePath("/services"); revalidatePath(`/admin/gallery/${slug}`); };
+export async function addServiceImages(slug: string, items: { path: string; title?: string; brand?: string }[]) {
+  await requireAdmin();
+  if (!SERVICE_SLUGS.includes(slug)) throw new Error("Unknown service");
+  const sb = db();
+  const { data: last } = await sb.from("service_images").select("sort_order").eq("service_slug", slug).order("sort_order", { ascending: false }).limit(1);
+  let n = (last?.[0]?.sort_order ?? -1) + 1;
+  await sb.from("service_images").insert(items.map((i) => ({ service_slug: slug, path: i.path, title: i.title || null, brand: i.brand || null, sort_order: n++ })));
+  refreshService(slug);
+}
+export async function updateServiceImage(id: string, slug: string, f: FormData) {
+  await requireAdmin();
+  await db().from("service_images").update({ title: str(f, "title") || null, brand: str(f, "brand") || null, published: f.get("published") === "on" }).eq("id", id);
+  refreshService(slug);
+}
+export async function deleteServiceImage(id: string, slug: string) {
+  await requireAdmin(); const sb = db();
+  const { data } = await sb.from("service_images").select("path").eq("id", id).single();
+  if (data) await sb.storage.from(BUCKET_PORTFOLIO).remove([data.path]);
+  await sb.from("service_images").delete().eq("id", id);
+  refreshService(slug);
+}
+export async function moveServiceImage(id: string, slug: string, dir: -1 | 1) {
+  await requireAdmin(); const sb = db();
+  const { data } = await sb.from("service_images").select("id").eq("service_slug", slug).order("sort_order").order("created_at");
+  if (!data) return;
+  const i = data.findIndex((x) => x.id === id), j = i + dir;
+  if (i < 0 || j < 0 || j >= data.length) return;
+  const order = data.map((x) => x.id); [order[i], order[j]] = [order[j], order[i]];
+  await Promise.all(order.map((oid, n) => sb.from("service_images").update({ sort_order: n }).eq("id", oid)));
+  refreshService(slug);
+}

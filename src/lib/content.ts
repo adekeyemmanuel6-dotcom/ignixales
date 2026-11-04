@@ -83,3 +83,13 @@ export const getTestimonials = cache(async (): Promise<Testimonial[]> => {
     return (data || []).map((t: Row) => ({ id: t.id, name: t.name, company: t.company, role: t.role, quote: t.quote, photo_url: publicUrl(t.photo_path) }));
   } catch { return []; }
 });
+
+export type ServiceImage = { id: string; url: string; title: string | null; brand: string | null };
+export async function getServiceImages(slug: string): Promise<ServiceImage[]> {
+  const sb = serviceClient();
+  if (!sb) return [];
+  try {
+    const { data } = await sb.from("service_images").select("*").eq("service_slug", slug).eq("published", true).order("sort_order").order("created_at");
+    return (data || []).map((r: Row) => ({ id: r.id, url: publicUrl(r.path)!, title: r.title, brand: r.brand }));
+  } catch { return []; }
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPackages, getProjects, getServices } from "@/lib/content";
+import { getPackages, getProjects, getServiceImages, getServices } from "@/lib/content";
+import { ServiceGallery } from "@/components/site/ServiceGallery";
 import { meta } from "@/lib/seo";
 import { PageHero, CtaBand, FaqList, JsonLd, PackageCard, ProjectCard, faqJsonLd } from "@/components/site/blocks";
 import { Section, Lime, Check, Heading } from "@/components/ui/Section";
@@ -9,6 +10,7 @@ import { CampaignArt } from "@/components/ui/CampaignArt";
 import { Reveal } from "@/components/ui/Reveal";
 
 type P = { params: Promise<{ slug: string }> };
+export const revalidate = 60;
 export async function generateStaticParams() { return ["banner-design", "flyer-design", "email-copywriting", "social-media-design"].map((slug) => ({ slug })); }
 export async function generateMetadata({ params }: P): Promise<Metadata> {
   const { slug } = await params; const s = (await getServices()).find((x) => x.slug === slug);
@@ -20,6 +22,7 @@ export default async function ServicePage({ params }: P) {
   const [services, packages, { projects }] = await Promise.all([getServices(), getPackages(), getProjects()]);
   const s = services.find((x) => x.slug === slug);
   if (!s) notFound();
+  const gallery = await getServiceImages(slug);
   const examples = projects.filter((p) => p.service_category === s.slug || p.related_services.includes(s.slug)).slice(0, 3);
   return (
     <>
@@ -40,10 +43,16 @@ export default async function ServicePage({ params }: P) {
           </div>
         </div>
       </Section>
-      <Section>
+      {gallery.length > 0 && (
+        <Section>
+          <Heading label="Gallery" title={<>{s.title} <Lime>work</Lime></>} sub="A selection of our work. Click any image to view it larger." />
+          <div className="mt-10"><ServiceGallery images={gallery} /></div>
+        </Section>
+      )}
+      {gallery.length === 0 && <Section>
         <Heading label="Examples" title={<>Example <Lime>projects</Lime></>} />
         <div className="mt-10 grid gap-5 md:grid-cols-3">{examples.length ? examples.map((p) => <ProjectCard key={p.id} p={p} />) : <p className="text-mute">Examples for this service will appear here as projects are published.</p>}</div>
-      </Section>
+      </Section>}
       <Section light>
         <Heading light label="Related packages" title={`${s.title} is included in every package.`} />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">{packages.filter((p) => s.related.includes(p.slug)).map((p) => <PackageCard key={p.slug} p={p} light />)}</div>

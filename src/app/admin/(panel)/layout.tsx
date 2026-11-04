@@ -9,7 +9,7 @@ import { Logo } from "@/components/site/Logo";
 export const metadata: Metadata = { title: "Ignixales Admin", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
-const nav = [["/admin", "Dashboard"], ["/admin/submissions", "Submissions"], ["/admin/inquiries", "Enquiries"], ["/admin/portfolio", "Portfolio"], ["/admin/content/packages", "Packages & prices"], ["/admin/content/addons", "Add-ons"], ["/admin/content", "Website content"], ["/admin/testimonials", "Testimonials"]];
+const nav = [["/admin", "Dashboard"], ["/admin/submissions", "Submissions"], ["/admin/inquiries", "Enquiries"], ["/admin/gallery", "Service galleries"], ["/admin/portfolio", "Projects (optional)"], ["/admin/content/packages", "Packages & prices"], ["/admin/content/addons", "Add-ons"], ["/admin/content", "Website content"], ["/admin/testimonials", "Testimonials"]];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getAdmin();
