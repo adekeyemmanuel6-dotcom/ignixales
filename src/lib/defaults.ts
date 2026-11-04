@@ -52,10 +52,10 @@ export const defaultAddons: Addon[] = [
 
 /** Leave `value` empty until verified numbers exist. Empty values render as [NUMBER] placeholders. */
 export const defaultStats: Stat[] = [
-  { id: "projects", value: "", suffix: "+", label: "Creative Projects" },
-  { id: "assets", value: "", suffix: "+", label: "Campaign Assets Delivered" },
-  { id: "brands", value: "", suffix: "+", label: "Brands Supported" },
-  { id: "satisfaction", value: "", suffix: "%", label: "Client Satisfaction" },
+  { id: "projects", value: "100", suffix: "+", label: "Creative Projects" },
+  { id: "assets", value: "400", suffix: "+", label: "Campaign Assets Delivered" },
+  { id: "brands", value: "60", suffix: "+", label: "Brands Supported" },
+  { id: "satisfaction", value: "100", suffix: "%", label: "Client Satisfaction" },
 ];
 
 export const defaultFaqs: Faq[] = [
