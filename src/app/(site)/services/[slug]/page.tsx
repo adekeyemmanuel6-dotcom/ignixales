@@ -6,7 +6,7 @@ import { meta } from "@/lib/seo";
 import { PageHero, CtaBand, FaqList, JsonLd, PackageCard, ProjectCard, faqJsonLd } from "@/components/site/blocks";
 import { Section, Lime, Check, Heading } from "@/components/ui/Section";
 import { Btn, Arrow } from "@/components/ui/Button";
-import { CampaignArt } from "@/components/ui/CampaignArt";
+import { Visual } from "@/components/ui/Visual";
 import { Reveal } from "@/components/ui/Reveal";
 
 type P = { params: Promise<{ slug: string }> };
@@ -31,7 +31,7 @@ export default async function ServicePage({ params }: P) {
       </PageHero>
       <Section tone="surface">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          <Reveal className="aspect-[4/3] overflow-hidden rounded-card border border-white/10"><CampaignArt kind={s.art} concept /></Reveal>
+          <Reveal className="aspect-[4/3] overflow-hidden rounded-card border border-white/10"><Visual img={gallery[0]?.url} kind={s.art} alt={s.title} concept /></Reveal>
           <div>
             <p className="text-lg text-white/85">{s.long}</p>
             {s.note && <p className="mt-4 rounded-lg border border-lime/30 bg-lime/5 p-3 text-sm text-lime">{s.note}</p>}

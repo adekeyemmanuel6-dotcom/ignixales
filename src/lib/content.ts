@@ -93,3 +93,14 @@ export async function getServiceImages(slug: string): Promise<ServiceImage[]> {
     return (data || []).map((r: Row) => ({ id: r.id, url: publicUrl(r.path)!, title: r.title, brand: r.brand }));
   } catch { return []; }
 }
+
+/** All uploaded service-gallery images, grouped by service and as an interleaved pool (for hero/collages). */
+export async function getAllServiceImages() {
+  const slugs = ["flyer-design", "banner-design", "social-media-design", "email-copywriting"] as const;
+  const entries = await Promise.all(slugs.map(async (s) => [s, await getServiceImages(s)] as const));
+  const by = Object.fromEntries(entries) as Record<string, ServiceImage[]>;
+  const pool: (ServiceImage & { service: string })[] = [];
+  const max = Math.max(0, ...entries.map(([, l]) => l.length));
+  for (let i = 0; i < max; i++) for (const [s, l] of entries) if (l[i]) pool.push({ ...l[i], service: s });
+  return { by, pool };
+}

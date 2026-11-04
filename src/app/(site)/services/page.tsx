@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getPackages, getProjects, getServices } from "@/lib/content";
+import { getAllServiceImages, getPackages, getProjects, getServices } from "@/lib/content";
 import { meta } from "@/lib/seo";
 import { PageHero, CtaBand, ProjectCard } from "@/components/site/blocks";
 import { Section, Lime, Check } from "@/components/ui/Section";
 import { Btn, ALink, Arrow } from "@/components/ui/Button";
-import { CampaignArt } from "@/components/ui/CampaignArt";
+import { Visual } from "@/components/ui/Visual";
 import { Reveal } from "@/components/ui/Reveal";
 import { cn, money } from "@/lib/utils";
 
 export const metadata: Metadata = meta("E-commerce Creative Services | Banners, Flyers, Social & Email Copy | Ignixales", "Four creative services built around your next big campaign: e-commerce banner design, promotional flyer design, social media design and e-commerce email copywriting.", "/services");
 
 export default async function ServicesPage() {
-  const [services, packages, { projects }] = await Promise.all([getServices(), getPackages(), getProjects()]);
+  const [services, packages, { projects }, { by: gal }] = await Promise.all([getServices(), getPackages(), getProjects(), getAllServiceImages()]);
   return (
     <>
       <PageHero label="Services" title={<>Creative services built around your <Lime>next big campaign.</Lime></>} sub="Four services, one coordinated campaign. Order a full package or just the pieces you need.">
@@ -23,7 +23,7 @@ export default async function ServicesPage() {
         return (
           <Section key={s.slug} tone={i % 2 ? "surface" : "ink"} id={s.slug}>
             <div className={cn("grid items-center gap-12 lg:grid-cols-2", i % 2 && "lg:[&>*:first-child]:order-2")}>
-              <Reveal className="aspect-[4/3] overflow-hidden rounded-card border border-white/10"><CampaignArt kind={s.art} /></Reveal>
+              <Reveal className="aspect-[4/3] overflow-hidden rounded-card border border-white/10"><Visual img={gal[s.slug]?.[0]?.url} kind={s.art} alt={s.title} /></Reveal>
               <div>
                 <p className="label">Service {s.index}</p>
                 <h2 className="h-display mt-3 text-[clamp(2.4rem,5vw,4rem)]">{s.title}</h2>

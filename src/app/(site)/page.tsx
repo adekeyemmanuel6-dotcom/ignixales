@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getCampaigns, getFaqs, getPackages, getProjects, getServices, getStats, getTestimonials } from "@/lib/content";
+import { getAllServiceImages, getCampaigns, getFaqs, getPackages, getProjects, getServices, getStats, getTestimonials } from "@/lib/content";
 import { industries } from "@/lib/defaults";
 import { Btn, Arrow, ALink } from "@/components/ui/Button";
 import { Section, Heading, Lime } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { CampaignArt } from "@/components/ui/CampaignArt";
+import { Visual } from "@/components/ui/Visual";
+import { ServiceGallery } from "@/components/site/ServiceGallery";
 import { Icon } from "@/components/ui/Icon";
 import { Comparison, CtaBand, DashboardIllustration, FaqList, HScroll, JsonLd, PackageCard, ProcessSteps, ProjectCard, StatsGrid, faqJsonLd } from "@/components/site/blocks";
 import { TestimonialSlider } from "@/components/site/Testimonials";
@@ -27,7 +29,9 @@ const features = [
 ] as const;
 
 export default async function Home() {
-  const [packages, services, campaigns, stats, faqs, testimonials, { projects }] = await Promise.all([getPackages(), getServices(), getCampaigns(), getStats(), getFaqs(), getTestimonials(), getProjects()]);
+  const [packages, services, campaigns, stats, faqs, testimonials, { projects, fromDb }] = await Promise.all([getPackages(), getServices(), getCampaigns(), getStats(), getFaqs(), getTestimonials(), getProjects()]);
+  const { by: gal, pool } = await getAllServiceImages();
+  const pick = (i: number) => (pool.length ? pool[i % pool.length].url : undefined);
   const featured = projects.filter((p) => p.featured);
   const statCards = (featured.length >= 3 ? featured : projects).slice(0, 3);
   const grid = projects.slice(0, 8);
@@ -60,15 +64,15 @@ export default async function Home() {
           <div aria-hidden className="relative hidden aspect-[1/1.02] lg:block">
             {heroCards.map((c, i) => (
               <div key={c.k} className={cn("absolute overflow-hidden rounded-xl border border-white/15 shadow-2xl shadow-black/60 transition duration-500 hover:z-50 hover:scale-[1.04]", c.cls, i % 2 ? "animate-float" : "")} style={{ animationDelay: `${i * 0.8}s` }}>
-                <CampaignArt kind={c.k} />
+                <Visual img={pick(i)} kind={c.k} />
               </div>
             ))}
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:hidden">
-            {(["black-friday", "christmas", "fashion", "skincare", "homepage", "email"] as const).map((k) => <div key={k} className="aspect-square overflow-hidden rounded-xl border border-white/15"><CampaignArt kind={k} /></div>)}
+            {(["black-friday", "christmas", "fashion", "skincare", "homepage", "email"] as const).map((k, i) => <div key={k} className="aspect-square overflow-hidden rounded-xl border border-white/15"><Visual img={pick(i)} kind={k} /></div>)}
           </div>
         </div>
-        <p className="container-x relative mt-6 text-[11px] text-white/35 lg:text-right">Campaign artwork shown is original concept work by Ignixales.</p>
+        {pool.length === 0 && <p className="container-x relative mt-6 text-[11px] text-white/35 lg:text-right">Campaign artwork shown is original concept work by Ignixales.</p>}
       </section>
 
       {/* 2 TRUST STRIP */}
@@ -92,7 +96,7 @@ export default async function Home() {
           </Reveal>
         </div>
         <Reveal delay={150} className="card mt-14 grid grid-cols-3 gap-3 p-3 sm:grid-cols-6 sm:gap-4 sm:p-5">
-          {(["homepage", "flyer", "social", "email", "fashion", "electronics"] as const).map((k, i) => <div key={k} className={cn("overflow-hidden rounded-xl", i % 2 ? "aspect-[3/4]" : "aspect-square")}><CampaignArt kind={k} /></div>)}
+          {(["homepage", "flyer", "social", "email", "fashion", "electronics"] as const).map((k, i) => <div key={k} className={cn("overflow-hidden rounded-xl", i % 2 ? "aspect-[3/4]" : "aspect-square")}><Visual img={pick(i + 6)} kind={k} /></div>)}
         </Reveal>
       </Section>
 
@@ -117,7 +121,7 @@ export default async function Home() {
           {statCards.map((p, i) => (
             <Reveal key={p.id} delay={i * 90}>
               <Link href={`/work/${p.slug}`} className="group relative block aspect-[4/5] overflow-hidden rounded-card">
-                <div className="h-full transition duration-700 group-hover:scale-105"><CampaignArt kind={p.art ?? "homepage"} concept={p.is_concept} /></div>
+                <div className="h-full transition duration-700 group-hover:scale-105"><Visual img={p.cover_url ?? pick(i + 3)} kind={p.art ?? "homepage"} concept={p.is_concept && !pool.length} /></div>
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-5 pt-16 text-white"><p className="font-display text-2xl uppercase">{p.title}</p></div>
               </Link>
             </Reveal>
@@ -134,7 +138,7 @@ export default async function Home() {
         <HScroll className="mt-12">
           {services.map((s) => (
             <article key={s.slug} className="card w-[84%] flex-none snap-start overflow-hidden sm:w-[420px]">
-              <div className="aspect-[4/3]"><CampaignArt kind={s.art} /></div>
+              <div className="aspect-[4/3] overflow-hidden"><Visual img={gal[s.slug]?.[0]?.url} kind={s.art} alt={s.title} /></div>
               <div className="p-6">
                 <p className="label">Service {s.index}</p>
                 <h3 className="mt-2 font-display text-3xl uppercase">{s.title}</h3>
@@ -197,10 +201,12 @@ export default async function Home() {
           <Heading label="Featured projects" title={<>A look at what <Lime>we create.</Lime></>} />
           <Btn href="/work" variant="ghost">View all work</Btn>
         </div>
+        {!fromDb && pool.length > 0 ? <div className="mt-12"><ServiceGallery images={pool.slice(0, 12)} /></div> : (
         <div className="mt-12 columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
           {grid.map((p, i) => <Reveal key={p.id} delay={(i % 3) * 70}><ProjectCard p={p} tall={i % 3 === 0} /></Reveal>)}
         </div>
-        {projects[0]?.is_concept && <p className="mt-2 text-xs text-mute">Projects shown are concept designs created by Ignixales, labelled as such. Completed client work will appear here once published.</p>}
+        )}
+        {!pool.length && projects[0]?.is_concept && <p className="mt-2 text-xs text-mute">Projects shown are concept designs created by Ignixales, labelled as such. Completed client work will appear here once published.</p>}
       </Section>
 
       {/* 12 TESTIMONIALS (only genuine, published ones) */}
@@ -215,8 +221,8 @@ export default async function Home() {
       <Section tone={testimonials.length ? "surface" : "ink"}>
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <Reveal className="grid grid-cols-2 gap-3">
-            <div className="aspect-[3/4] overflow-hidden rounded-card"><CampaignArt kind="black-friday" /></div>
-            <div className="mt-10 aspect-[3/4] overflow-hidden rounded-card"><CampaignArt kind="new-year" /></div>
+            <div className="aspect-[3/4] overflow-hidden rounded-card"><Visual img={pick(1)} kind="black-friday" /></div>
+            <div className="mt-10 aspect-[3/4] overflow-hidden rounded-card"><Visual img={pick(4)} kind="new-year" /></div>
           </Reveal>
           <div>
             <Heading label="About Ignixales" title={<>We help e-commerce brands turn creative ideas into <Lime>campaigns.</Lime></>} />

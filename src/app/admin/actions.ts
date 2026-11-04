@@ -168,7 +168,7 @@ export async function resetContent(key: string) {
 
 /* ---------- per-service galleries ---------- */
 const SERVICE_SLUGS = ["banner-design", "flyer-design", "email-copywriting", "social-media-design"];
-const refreshService = (slug: string) => { revalidatePath(`/services/${slug}`); revalidatePath("/services"); revalidatePath(`/admin/gallery/${slug}`); };
+const refreshService = (slug: string) => { revalidatePath("/"); revalidatePath("/work"); revalidatePath(`/services/${slug}`); revalidatePath("/services"); revalidatePath(`/admin/gallery/${slug}`); };
 export async function addServiceImages(slug: string, items: { path: string; title?: string; brand?: string }[]) {
   await requireAdmin();
   if (!SERVICE_SLUGS.includes(slug)) throw new Error("Unknown service");
