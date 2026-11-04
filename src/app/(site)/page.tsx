@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getAllServiceImages, getCampaigns, getFaqs, getPackages, getProjects, getServices, getStats, getTestimonials } from "@/lib/content";
 import { industries } from "@/lib/defaults";
@@ -35,13 +36,6 @@ export default async function Home() {
   const featured = projects.filter((p) => p.featured);
   const statCards = (featured.length >= 3 ? featured : projects).slice(0, 3);
   const grid = projects.slice(0, 8);
-  const heroTiles = [
-    { k: "black-friday", cls: "col-span-4 row-span-3" },
-    { k: "christmas", cls: "col-span-2 row-span-4" },
-    { k: "fashion", cls: "col-span-2 row-span-3" },
-    { k: "skincare", cls: "col-span-2 row-span-3" },
-    { k: "homepage", cls: "col-span-2 row-span-2" },
-  ] as const;
 
   return (
     <>
@@ -60,16 +54,21 @@ export default async function Home() {
             </div>
             <p className="mt-6 text-sm text-mute">Built for ambitious e-commerce brands.</p>
           </div>
-          <div className="mx-auto grid aspect-square w-full max-w-[560px] grid-cols-6 grid-rows-6 gap-2.5 sm:gap-3 lg:max-w-[540px] lg:justify-self-end">
-            {heroTiles.map((t, i) => (
-              <div key={t.k} className={cn("group relative overflow-hidden rounded-2xl border border-white/10 bg-card shadow-xl shadow-black/40", t.cls)}>
-                <div className="h-full w-full transition duration-700 group-hover:scale-[1.04]"><Visual img={pick(i)} kind={t.k} alt="Campaign design sample" /></div>
+          <div className="mx-auto grid w-full max-w-[540px] gap-2.5 sm:gap-3 lg:justify-self-end">
+            <div className="group relative aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
+              <Image src="/images/hero-banner.webp" alt="Black Friday super sale banner design" fill priority sizes="(min-width:1024px) 540px, 100vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
+            </div>
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+              <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
+                <Image src="/images/hero-blackfriday.jpg" alt="Black Friday one hour sale social media design" fill priority sizes="(min-width:1024px) 270px, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
               </div>
-            ))}
+              <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
+                <Image src="/images/hero-gifting.webp" alt="Gifting season Christmas campaign design" fill priority sizes="(min-width:1024px) 270px, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
+              </div>
+            </div>
           </div>
         </div>
-        {pool.length === 0 && <p className="container-x relative mt-6 text-[11px] text-white/35 lg:text-right">Campaign artwork shown is original concept work by Ignixales.</p>}
-      </section>
+              </section>
 
       {/* 2 TRUST STRIP */}
       <section className="border-y border-white/10 bg-surface py-10">
