@@ -19,6 +19,6 @@ export const BUCKET_ASSETS = "project-assets";
 
 export function publicUrl(path: string | null | undefined): string | null {
   if (!path) return null;
-  if (/^https?:\/\//.test(path)) return path;
+  if (/^https?:\/\//.test(path) || path.startsWith("/")) return path; // absolute URL or a site /public asset
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${BUCKET_PORTFOLIO}/${path}`;
 }
