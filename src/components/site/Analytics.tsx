@@ -1,6 +1,7 @@
 "use client";
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { AnimatePresence, m } from "framer-motion";
 
 const KEY = "igx-consent";
 export function readConsent(): "granted" | "denied" | null {
@@ -33,15 +34,15 @@ export function Analytics() {
 export function CookieBanner() {
   const [show, setShow] = useState(false);
   useEffect(() => { setShow(readConsent() === null); }, []);
-  if (!show) return null;
   const set = (v: "granted" | "denied") => { try { localStorage.setItem(KEY, v); } catch {} setShow(false); window.dispatchEvent(new Event("igx-consent")); };
   return (
-    <div role="dialog" aria-label="Cookie consent" className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-xl rounded-2xl border border-white/15 bg-card/95 p-4 shadow-2xl backdrop-blur sm:p-5">
+    <AnimatePresence>{show && (
+    <m.div role="dialog" aria-label="Cookie consent" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }} transition={{ duration: 0.45, delay: 0.8 }} className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-xl rounded-2xl border border-white/15 bg-card/95 p-4 shadow-2xl backdrop-blur sm:p-5">
       <p className="text-sm text-white/80">We use cookies for analytics and to measure our campaigns. You choose; nothing optional loads until you accept. See our <a className="text-lime underline" href="/privacy">Privacy Policy</a>.</p>
       <div className="mt-3 flex gap-2">
         <button onClick={() => set("granted")} className="btn btn-lime !min-h-[40px] !px-5 !py-2 !text-xs">Accept</button>
         <button onClick={() => set("denied")} className="btn btn-ghost !min-h-[40px] !px-5 !py-2 !text-xs">Decline</button>
       </div>
-    </div>
+    </m.div>)}</AnimatePresence>
   );
 }

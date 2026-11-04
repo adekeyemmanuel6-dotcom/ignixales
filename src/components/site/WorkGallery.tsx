@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import { m } from "framer-motion";
 import type { Project } from "@/lib/types";
 import { ProjectCard } from "./blocks";
 import { cn } from "@/lib/utils";
@@ -32,9 +33,9 @@ export function WorkGallery({ projects }: { projects: Project[] }) {
         })}
       </div>
       <p className="mt-4 text-sm text-mute" aria-live="polite">{shown.length} project{shown.length === 1 ? "" : "s"}</p>
-      <div className="mt-6 columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
+      <m.div key={f} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mt-6 columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
         {shown.map((p, i) => <ProjectCard key={p.id} p={p} tall={i % 4 === 0} />)}
-      </div>
+      </m.div>
     </div>
   );
 }

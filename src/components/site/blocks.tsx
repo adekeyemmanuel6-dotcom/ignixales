@@ -45,7 +45,7 @@ export function CtaBand({ title = <>Your next big sales season starts with the r
 export function PackageCard({ p, light }: { p: Package; light?: boolean }) {
   const rec = p.recommended;
   return (
-    <Reveal className="h-full">
+    <Reveal className="h-full" lift>
       <article className={cn("relative flex h-full flex-col rounded-card p-6 sm:p-7", light ? (rec ? "bg-dark text-white" : "border border-black/10 bg-white text-dark") : rec ? "border border-lime/60 bg-card shadow-[0_0_60px_-20px_#D8FF00]" : "card")}>
         {rec && <span className="absolute -top-3 left-6 rounded-full bg-lime px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-black">Recommended</span>}
         <h3 className="h-display text-3xl">{p.name}</h3>
@@ -173,7 +173,7 @@ export function ProcessSteps() {
   return (
     <ol className="grid gap-4 sm:grid-cols-2">
       {steps.map(([t, d], i) => (
-        <Reveal as="li" key={t} delay={i * 80} className="card p-6 transition hover:border-lime/40">
+        <Reveal as="li" key={t} delay={i * 80} className="card p-6 transition hover:border-lime/40" lift>
           <span className="h-display text-5xl text-lime">0{i + 1}</span>
           <h3 className="mt-3 font-display text-2xl uppercase">{t}</h3><p className="mt-2 text-sm text-mute">{d}</p>
         </Reveal>

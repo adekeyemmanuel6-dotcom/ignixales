@@ -6,6 +6,7 @@ import { industries } from "@/lib/defaults";
 import { Btn, Arrow, ALink } from "@/components/ui/Button";
 import { Section, Heading, Lime } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
+import { HeroHeadline, Parallax, Stagger, StaggerItem } from "@/components/ui/motion";
 import { CampaignArt } from "@/components/ui/CampaignArt";
 import { Visual } from "@/components/ui/Visual";
 import { ServiceGallery } from "@/components/site/ServiceGallery";
@@ -44,31 +45,39 @@ export default async function Home() {
         <div className="grain pointer-events-none absolute inset-0 opacity-70" />
         <div className="pointer-events-none absolute -left-40 top-20 h-[500px] w-[500px] rounded-full bg-lime/10 blur-[140px]" />
         <div className="container-x relative grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
-          <div>
-            <p className="label mb-5 flex items-center gap-2"><i className="h-2 w-2 rounded-full bg-lime" />E-commerce campaign creative studio</p>
-            <h1 className="h-display text-[clamp(2.8rem,7.2vw,5.8rem)]">Your ultimate<br />e-commerce<br /><Lime>creative partner.</Lime></h1>
-            <p className="mt-5 max-w-xl text-lg text-mute">We create powerful promotional designs and compelling campaign copy that help e-commerce brands stand out, attract attention, and make every sales season count.</p>
-            <div className="mt-7 flex flex-wrap gap-3">
+          <Stagger stagger={0.1} delay={0.05}>
+            <StaggerItem y={14}><p className="label mb-5 flex items-center gap-2"><i className="h-2 w-2 rounded-full bg-lime" />E-commerce campaign creative studio</p></StaggerItem>
+            <HeroHeadline className="h-display text-[clamp(2.8rem,7.2vw,5.8rem)]" lines={[{ t: "Your ultimate" }, { t: "e-commerce" }, { t: "creative partner.", lime: true }]} />
+            <StaggerItem><p className="mt-5 max-w-xl text-lg text-mute">We create powerful promotional designs and compelling campaign copy that help e-commerce brands stand out, attract attention, and make every sales season count.</p></StaggerItem>
+            <StaggerItem><div className="mt-7 flex flex-wrap gap-3">
               <Btn href="/pricing" event="cta_click" eventParams={{ location: "hero_packages" }}>Explore our packages <Arrow /></Btn>
               <Btn href="/work" variant="ghost">View our work</Btn>
-            </div>
-            <p className="mt-6 text-sm text-mute">Built for ambitious e-commerce brands.</p>
-          </div>
-          <div className="mx-auto grid w-full max-w-[540px] gap-2.5 sm:gap-3 lg:justify-self-end">
-            <div className="group relative aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
-              <Image src="/images/hero-banner.webp" alt="Black Friday super sale banner design" fill priority sizes="(min-width:1024px) 540px, 100vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
-            </div>
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-              <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
-                <Image src="/images/hero-blackfriday.jpg" alt="Black Friday one hour sale social media design" fill priority sizes="(min-width:1024px) 270px, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
+            </div></StaggerItem>
+            <StaggerItem y={10}><p className="mt-6 text-sm text-mute">Built for ambitious e-commerce brands.</p></StaggerItem>
+          </Stagger>
+          <Parallax distance={18} className="mx-auto w-full max-w-[540px] lg:justify-self-end">
+            <Stagger stagger={0.14} delay={0.35} className="grid gap-2.5 sm:gap-3">
+              <StaggerItem y={30} scale={0.97}>
+                <div className="group relative aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
+                  <Image src="/images/hero-banner.webp" alt="Black Friday super sale banner design" fill priority sizes="(min-width:1024px) 540px, 100vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
+                </div>
+              </StaggerItem>
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                <StaggerItem y={30} scale={0.97}>
+                  <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
+                    <Image src="/images/hero-blackfriday.jpg" alt="Black Friday one hour sale social media design" fill priority sizes="(min-width:1024px) 270px, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
+                  </div>
+                </StaggerItem>
+                <StaggerItem y={30} scale={0.97}>
+                  <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
+                    <Image src="/images/hero-gifting.webp" alt="Gifting season Christmas campaign design" fill priority sizes="(min-width:1024px) 270px, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
+                  </div>
+                </StaggerItem>
               </div>
-              <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40">
-                <Image src="/images/hero-gifting.webp" alt="Gifting season Christmas campaign design" fill priority sizes="(min-width:1024px) 270px, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
-              </div>
-            </div>
-          </div>
+            </Stagger>
+          </Parallax>
         </div>
-              </section>
+      </section>
 
       {/* 2 TRUST STRIP */}
       <section className="border-y border-white/10 bg-surface py-10">
@@ -100,7 +109,7 @@ export default async function Home() {
         <Heading center label="Why Ignixales?" title={<>Great campaigns. Smart creative. <Lime>Better brand experiences.</Lime></>} />
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map(([icon, t, d], i) => (
-            <Reveal key={t} delay={(i % 3) * 80} className="group card p-7 transition hover:-translate-y-1 hover:border-lime/40">
+            <Reveal key={t} delay={(i % 3) * 80} className="group card p-7 transition hover:border-lime/40" lift>
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-lime/10 text-lime transition group-hover:bg-lime group-hover:text-black"><Icon name={icon} /></span>
               <h3 className="mt-6 font-display text-2xl uppercase">{t}</h3><p className="mt-2 text-sm text-mute">{d}</p>
             </Reveal>

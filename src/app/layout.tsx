@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Anton, Inter } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/utils";
+import { MotionProvider } from "@/components/ui/motion";
 
 const display = Anton({ weight: "400", subsets: ["latin"], variable: "--font-display", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -19,7 +20,10 @@ export const viewport: Viewport = { themeColor: "#090A0B", width: "device-width"
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        <noscript><style>{`[style*="opacity: 0"],[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style></noscript>
+        <MotionProvider>{children}</MotionProvider>
+      </body>
     </html>
   );
 }
